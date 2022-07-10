@@ -12,18 +12,27 @@ def function_start(func):
             return False
         line += '\n\tpass'
         tree = ast.parse(line)
-        v = func(tree)
-        return v
+        return func(tree)
 
     return wrapper
 
 
-def s001(line):  # long line
+def s001(line: str) -> bool:
+    """
+    Check if Line's length is greater than 79 characters;
+    :param line: Line of code to check
+    :return: line length > 79 or not
+    """
     return len(line) > 79
 
 
-def s002(line):  # Indentation is not a multiple of four;
-    return (len(line) - len(line.lstrip())) % 4
+def s002(line: str) -> bool:
+    """
+    Check if Line's indentation is a multiple of four;
+    :param line: Line of code to check
+    :return: Line's indentation is a multiple of four or not
+    """
+    return bool((len(line) - len(line.lstrip())) % 4)
 
 
 def s003(line):  # Unnecessary semicolon after a statement
@@ -58,7 +67,7 @@ def s007(line):
     line = line.lstrip()
     if line.startswith('class') or line.startswith('def'):
         name_ = line.split()[1]
-        return line[line.index(name_)-2] == ' '
+        return line[line.index(name_) - 2] == ' '
     return False
 
 
@@ -99,7 +108,6 @@ def s011(line):
 
 @function_start
 def s012(tree):
-
     if tree.body[0].args.defaults:
         answer = [isinstance(x, ast.List) for x in tree.body[0].args.defaults]
         return any(answer)
@@ -140,12 +148,12 @@ def error_manager(file, path):
         if s012(x):
             error[12] = f"{path}: Line {i + 1}: S012 Default argument value is mutable"
         if error:
-            ordered_error = sorted([y for y in error.items()], key=lambda z: z[0])
+            ordered_error = sorted(list(error.items()), key=lambda z: z[0])
             print(*sorted([x[1] for x in ordered_error]), sep='\n')
 
 
 def main():
-    directory = sys.argv[1]
+    directory = input('Veuillez indiquer le chemin vers le fichier: ')
     if os.path.isfile(directory):
         with open(directory) as file:
             error_manager(file, directory)
